@@ -2,6 +2,7 @@ package com.mx.animalia.application.dao;
 
 import com.mx.animalia.application.conexion.Datos;
 import com.mx.animalia.application.constants.ConstantsWS;
+import com.mx.animalia.application.model.CiudadanoDatosModel;
 import com.mx.animalia.application.model.DatosRegistroCiudadano;
 import com.mx.animalia.application.model.DatosRolCiudadanosModel;
 import com.mx.animalia.application.model.RolCiudadanosModel;
@@ -22,6 +23,7 @@ public class AltaCiudadanosDaoImpl implements AltaCiudadanosDao{
 	public HashMap<String, Object> altaCiudadanos(DatosRegistroCiudadano datosRegistroCiudadano) {
 
 		HashMap<String, Object> resultadosSP = new HashMap<String, Object>();
+		ArrayList<String> r1 = new ArrayList<>();
 		String sql = ConstantsWS.SP_INSERT_CIUDADANO;
 		UtileriasHelper utileriasHelper = new UtileriasHelper();
 
@@ -39,8 +41,8 @@ public class AltaCiudadanosDaoImpl implements AltaCiudadanosDao{
 					||(idRol==0 && idRol1==0 && idRol2==0)){
 
 				String rol = idRol==0 ? "7" : Integer.toString(idRol);
-				String rol1 = idRol==0 ? "7" : Integer.toString(idRol1);
-				String rol2 = idRol==0 ? "7" : Integer.toString(idRol2);
+				String rol1 = idRol1==0 ? "7" : Integer.toString(idRol1);
+				String rol2 = idRol2==0 ? "7" : Integer.toString(idRol2);
 
 				if(rol.equals("7") && rol1.equals("7") && rol2.equals("7")){
 					rol2="6";
@@ -61,11 +63,16 @@ public class AltaCiudadanosDaoImpl implements AltaCiudadanosDao{
 				List<String[]> resultado= datos.ejecutaSP(sql,parametros);
 				ArrayList<RolCiudadanosModel> r = new ArrayList<>();
 				String respuesta="";
+				String respuesta1="";
 				if(!resultado.isEmpty()){
 					if(resultado.get(0)[0].contains("ok")){
-						resultadosSP.put("resultado", "ok");
+						respuesta1=(i+1) +" El ciudadano " + datosRegistroCiudadano.getCiudadanosRequest().get(i).getNombreCiudadano() + " se registro correctamente";
+						r1.add(i,respuesta1);
+						//resultadosSP.put("resultado", "El ciudadadano se registro correctamente" + (i+1));
 					}else{
-						resultadosSP.put("resultado", resultado.get(0)[0]);
+						respuesta1=(i+1) +" El ciudadano " + datosRegistroCiudadano.getCiudadanosRequest().get(i).getNombreCiudadano() + " " +resultado.get(0)[0];
+						//resultadosSP.put("resultado", resultado.get(0)[0]);
+						r1.add(i,respuesta1);
 					}
 				}else{
 					resultadosSP.put("resultado", "Algo salio mal al registrar el usuario"+datosRegistroCiudadano.getCiudadanosRequest().get(i).getNombreCiudadano());
@@ -75,6 +82,7 @@ public class AltaCiudadanosDaoImpl implements AltaCiudadanosDao{
 				resultadosSP.put("resultado", "La combinacion de roles no es valida "+datosRegistroCiudadano.getCiudadanosRequest().get(i).getNombreCiudadano());
 			}
 		}
+		resultadosSP.put("resultado",r1);
 		return resultadosSP;
 	}
 
